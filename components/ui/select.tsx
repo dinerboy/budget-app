@@ -117,9 +117,7 @@ function SelectContent({
         >
           <SelectScrollUpButton />
 
-          <SelectPrimitive.List>
-            {children}
-          </SelectPrimitive.List>
+          <SelectPrimitive.List>{children}</SelectPrimitive.List>
 
           <SelectScrollDownButton />
         </SelectPrimitive.Popup>
