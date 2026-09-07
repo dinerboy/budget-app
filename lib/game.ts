@@ -48,6 +48,16 @@ export function applyCommand(current:GameState,cmd:Command):GameState {
  else if(cmd.type==='vehicle') {if(s.vehicles.length>=20)throw new Error('Your garage is full.');s.vehicles.push({id:crypto.randomUUID(),name:text(cmd.name,'Vehicle'),plate:text(cmd.plate,'Registration',20),mileage:number(cmd.mileage,'Mileage',0,2000000)});}
  else if(cmd.type==='mileage') {const v=s.vehicles.find(v=>v.id===cmd.id);if(!v)throw new Error('Vehicle no longer exists.');v.mileage=number(cmd.mileage,'Mileage',0,2000000);}
  else if(cmd.type==='event') {if(s.events.length>=200)throw new Error('Your calendar is full.');const when=date(cmd.date);if(when<today())throw new Error('Choose today or a future date.');if(cmd.vehicleId&&!s.vehicles.some(v=>v.id===cmd.vehicleId))throw new Error('Vehicle no longer exists.');s.events.push({id:crypto.randomUUID(),name:text(cmd.name,'Event'),date:when,amount:number(cmd.amount,'Amount',0),category:category(cmd.category),paid:false,...(cmd.vehicleId?{vehicleId:String(cmd.vehicleId)}:{})});}
+ else if(cmd.type==='deleteEvent') {
+  const e=s.events.find(e=>e.id===cmd.id);
+
+  if(!e)
+    throw new Error('Event no longer exists.');
+
+  if(e.paid)
+    throw new Error('Completed events cannot be removed here.');
+
+  s.events=s.events.filter(v=>v.id!==cmd.id);}
  else if(cmd.type==='payEvent') {const e=s.events.find(e=>e.id===cmd.id);if(!e)throw new Error('Event no longer exists.');if(e.paid)throw new Error('Already completed.');e.paid=true;if(e.amount>0)s.transactions.unshift({id:crypto.randomUUID(),name:e.name,amount:e.amount,category:e.category,type:'expense',date:today(),...(e.vehicleId?{vehicleId:e.vehicleId}:{})});reward(`event:${e.id}`,15);}
  else if(cmd.type==='fresh') {if(cmd.confirm!=='START FRESH')throw new Error('Type START FRESH to confirm.');return {...seedState(false),name:s.name,version:s.version+1};}
  else throw new Error('Unknown action.');
