@@ -446,7 +446,7 @@ export default function Nexus() {
       oscillator.type = 'square';
       oscillator.frequency.value = frequency;
 
-      gain.gain.value = 0.025;
+      gain.gain.value = 1;
 
       oscillator.connect(gain);
       gain.connect(audio.destination);

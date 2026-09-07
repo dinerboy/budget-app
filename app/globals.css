@@ -1650,3 +1650,48 @@ footer > span:last-child {
     20% 20%
   );
 }
+
+/* =========================================================
+   SAVEPOINT — ROOM ART BLEED FIX
+   Prevent the original reference dialogue from appearing
+   underneath the bedroom.
+   ========================================================= */
+
+.room {
+  --room-height: 508px;
+
+  height: var(--room-height) !important;
+  min-height: var(--room-height) !important;
+  max-height: var(--room-height) !important;
+
+  flex: 0 0 var(--room-height) !important;
+
+  overflow: hidden !important;
+}
+
+/* Keep both artwork layers clipped to the room */
+.room::before,
+.room-art {
+  height: var(--room-height) !important;
+  max-height: var(--room-height) !important;
+  bottom: auto !important;
+}
+
+/* Existing responsive room sizes */
+@media (max-width: 1300px) {
+  .room {
+    --room-height: 510px;
+  }
+}
+
+@media (max-width: 1050px) {
+  .room {
+    --room-height: 505px;
+  }
+}
+
+@media (max-width: 620px) {
+  .room {
+    --room-height: 510px;
+  }
+}
