@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, type FormEvent } from 'react';
+import WorldView from './game/WorldView';
 import {
   SidebarProvider,
   Sidebar,
@@ -383,6 +384,7 @@ function ActionForm({
 }
 
 export default function Nexus() {
+  const [worldMode, setWorldMode] = useState(true);
   const [state, setState] = useState<GameState>(() => seedState());
   const [active, setActive] = useState('Home');
   const [message, setMessage] = useState('Ready to take control today?');
@@ -663,18 +665,19 @@ export default function Nexus() {
       )
         return;
       if (e.key === 'Escape') {
-        setForm(null);
-        setHelp(false);
-        setActive('Home');
+        if (busy) return;
+        if (form) setForm(null);
+        else if (help) setHelp(false);
+        else setWorldMode(true);
       }
-      if (e.key.toLowerCase() === 'n' && !form && !help) {
+      if (e.key.toLowerCase() === 'n' && !worldMode && !form && !help) {
         e.preventDefault();
         open('transaction', 'ADD TRANSACTION');
       }
     };
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
-  }, [form, help]);
+  }, [form, help, busy, worldMode]);
   function exportData() {
     const blob = new Blob([JSON.stringify(state, null, 2)], {
       type: 'application/json',
@@ -1252,6 +1255,13 @@ export default function Nexus() {
   }
   return (
     <div className="game">
+      <div hidden={!worldMode}>
+        <WorldView state={state} wallet={balance.wallet} savings={balance.saved} date={clock}
+          ready={ready} message={loadError || message} paused={!worldMode || !!form || help}
+          onDashboard={(view='Home')=>{navigate(view);setWorldMode(false);}} onOpen={open}/>
+      </div>
+      <div hidden={worldMode} className="savepoint-dashboard">
+      <button className="return-world pixel-button" onClick={()=>setWorldMode(true)}>← RETURN TO WORLD</button>
       <header className="topbar">
         <strong className="brand">
           <span className="brand-mark" aria-hidden="true" />
@@ -1635,10 +1645,10 @@ export default function Nexus() {
                 : '◆ ADVENTURE SAVED'}
         </button>
         <span>
-          A MORE ORGANISED TOMORROW{' '}
-          <Sprite x={1485} y={984} w={33} h={31} scale={0.7} />
+          Small steps. A brighter you.
         </span>
       </footer>
+      </div>
       <Dialog
         open={!!form}
         onOpenChange={(v) => {
