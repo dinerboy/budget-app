@@ -7,7 +7,7 @@ const pixel = VT323({
   variable: '--font-pixel',
 });
 export const metadata: Metadata = {
-  title: 'NEXUS | Your everyday adventure',
+  title: 'SAVEPOINT | Build a better tomorrow',
   description:
     'A pixel-art budgeting adventure. Track expenses, grow your savings, and complete your daily quests.',
 };
